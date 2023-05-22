@@ -10,4 +10,60 @@ body {
   background-color: #fafafa;
   color: #212121;
   line-height: 1.5;
+  background-color: rgb(214, 236, 255);
+}
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.photo-card {
+  display: flex;
+  flex-direction: column;
+  width: (100%)/3 px;
+  padding: 10px;
+  background-color: aliceblue;
+  border: 2px solid #0d45c9;
+  border-radius: 5px;
+}
+/* .load-form {
+  margin: 30px;
+} */
+.input {
+  border: 2px solid #0d45c9;
+  border-radius: 5px;
+  font-family: inherit;
+  color: #0d45c9;
+  height: 30px;
+  width: 200px;
+  background-color: aliceblue;
+  margin: 30px;
+}
+.load-more {
+  display: flex;
+  margin: 20px auto;
+}
+.submitBtn,
+.load-more {
+  width: 100px;
+  height: 30px;
+  border: 2px solid #0d45c9;
+  border-radius: 5px;
+  color: #0d45c9;
+  background-color: aliceblue;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+.info-item {
+  color: #0d45c9;
+  font-size: 16px;
+}
+button:disabled {
+  background-color: #c1c1c1;
+  cursor: not-allowed;
+}
+button.hidden {
+  display: none;
 }

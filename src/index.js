@@ -6,11 +6,13 @@ const refs = {
   gallery: document.querySelector('.gallery'),
   loadBtn: document.querySelector('.load-more'),
 };
+
 const pictures = new Pictures();
 const loadBtn = new LoadBtn({
-  selector: '#load-more',
+  selector: '.load-more',
   isHidden: true,
 });
+
 refs.form.addEventListener('submit', onSubmit);
 loadBtn.button.addEventListener('click', fetchPictures);
 
@@ -26,7 +28,19 @@ function onSubmit(event) {
     pictures.resetPage();
     loadBtn.show();
     clearGallery();
-    fetchPictures().finally(() => form.reset());
+    pictures
+      .getPictures()
+      .then(pics => {
+        if (pics.totalHits === 0) {
+          loadBtn.hide();
+          Notiflix.Notify.failure(
+            'Sorry, there are no images matching your search query. Please try again.'
+          );
+          throw new Error('No data in onSubmit');
+        }
+        fetchPictures();
+      })
+      .finally(() => form.reset());
   }
 }
 function clearGallery() {
@@ -36,7 +50,7 @@ async function fetchPictures() {
   loadBtn.disable();
   try {
     const markup = await getMarkup();
-    if (!markup) throw new Error('No data');
+    if (!markup) throw new Error('No data in fetchPictures');
     updateMarkup(markup);
   } catch (error) {
     onError(error);
@@ -46,17 +60,13 @@ async function fetchPictures() {
 async function getMarkup() {
   try {
     const pics = await pictures.getPictures();
-    if (!pics) {
-      loadBtn.hide();
-      return '';
-    }
-    if (pics.length === 0) {
-      Notiflix.Notify.warning(
-        'Sorry, there are no images matching your search query. Please try again.'
+    console.log('pictures', pics);
+    if (pics.hits.length === 0) {
+      Notiflix.Notify.info(
+        "We're sorry, but you've reached the end of search results."
       );
-      throw new Error('No data');
     }
-    return pics.reduce((markup, pic) => markup + createmarkup(pic), '');
+    return pics.hits.reduce((markup, pic) => markup + createmarkup(pic), '');
   } catch (error) {
     onError(error);
   }
@@ -71,7 +81,7 @@ function createmarkup({
   downloads,
 }) {
   return `<div class="photo-card">
-    <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+    <img src="${webformatURL}" alt="${tags}" loading="lazy" width="300"/>
     <div class="info">
       <p class="info-item">
         <b>Likes ${likes}</b>
@@ -94,5 +104,5 @@ function updateMarkup(markup) {
 function onError(error) {
   console.log(error);
   loadBtn.hide();
-  refs.gallery.innerHTML = 'ERROR!';
+  //refs.gallery.innerHTML = 'ERROR!';
 }
