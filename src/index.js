@@ -28,19 +28,21 @@ function onSubmit(event) {
     pictures.resetPage();
     loadBtn.show();
     clearGallery();
-    pictures
-      .getPictures()
-      .then(pics => {
-        if (pics.totalHits === 0) {
-          loadBtn.hide();
-          Notiflix.Notify.failure(
-            'Sorry, there are no images matching your search query. Please try again.'
-          );
-          throw new Error('No data in onSubmit');
-        }
-        fetchPictures();
-      })
-      .finally(() => form.reset());
+    // pictures
+    //   .getPictures()
+    //   .then(pics => {
+    //     if (pics.totalHits === 0) {
+    //       loadBtn.hide();
+    //       Notiflix.Notify.failure(
+    //         'Sorry, there are no images matching your search query. Please try again.'
+    //       );
+    //       throw new Error('No data in onSubmit');
+    //     }
+    //     fetchPictures();
+    //   })
+    //   .finally(() => form.reset());
+    fetchPictures();
+    form.reset();
   }
 }
 function clearGallery() {
@@ -61,7 +63,23 @@ async function getMarkup() {
   try {
     const pics = await pictures.getPictures();
     console.log('pictures', pics);
-    if (pics.hits.length === 0) {
+
+    if (pics.totalHits === 0) {
+      loadBtn.hide();
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      throw new Error('No data in onSubmit');
+    }
+    // if (pics.hits.length === 0) {
+    //   loadBtn.hide();
+    //   Notiflix.Notify.info(
+    //     "We're sorry, but you've reached the end of search results."
+    //   );
+    // }
+    if (pics.hits.length < 40) {
+      loadBtn.hide();
+
       Notiflix.Notify.info(
         "We're sorry, but you've reached the end of search results."
       );
